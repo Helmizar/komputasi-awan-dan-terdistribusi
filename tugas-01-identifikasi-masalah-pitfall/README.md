@@ -55,7 +55,7 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 | Nama | NIM | Kontribusi |
 |---|---|---|
 | Fahmi Fajar Maulana | [nim] | [pitfall/bagian yang dikerjakan] |
-| Ical Helmizar Tambunan | [nim] | [pitfall/bagian yang dikerjakan] |
+| Ical Helmizar Tambunan | 103072400074 | Latency Is Zero |
 | Ulil Albab An-Nuha | 103072430017 | The Network is Reliable |
 
 ## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
@@ -72,10 +72,17 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 ---
 
-## Pitfall 2: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 2: Latency Is Zero — ditulis oleh ICAL HELMIZAR TAMUBUNAN
 
-(ulangi struktur di atas)
+**Bukti di skenario:** Di sistem FoodGo, belum ada pengaturan timeout saat satu service memanggil service lainnya. Pada skenario disebutkan bahwa “modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu.” Akibatnya, ketika jumlah pesanan meningkat, proses di aplikasi menjadi semakin lambat karena banyak permintaan yang terus menunggu. Kondisi ini bahkan menyebabkan server mengalami crash total dan harus di-restart secara manual.
 
+**Kenapa ini keliru:** Karena komunikasi antar jaringan pasti membutuhkan waktu, jadi respons dari server tidak selalu bisa diterima dengan cepat. Waktu respons juga bisa dipengaruhi oleh kondisi jaringan dan beban pada server yang dituju. Kalau waktu tunggu tidak dibatasi, ketika server tujuan sedang bermasalah atau lambat, aplikasi yang memanggilnya akan ikut menunggu terlalu lama dan akhirnya bisa terhenti.
+
+**Dampak ke FoodGo:** Saat jam makan siang, jumlah pesanan meningkat sehingga modul pembayaran menjadi lebih lambat. Karena tidak ada timeout, banyak thread pada modul pesanan yang harus menunggu respons dari modul pembayaran. Ketika ratusan pesanan masuk secara bersamaan, semakin banyak thread yang ikut tertahan dan menggunakan sumber daya server. Jika kondisi ini terus terjadi, sumber daya server bisa habis dan akhirnya menyebabkan server FoodGo mengalami crash atau tidak dapat digunakan.
+
+**Solusi desain awal:** Menerapkan timeout dengan batas waktu tertentu, misalnya maksimal 3 detik, pada komunikasi antar-modul dan menggunakan Circuit Breaker. Jika modul pembayaran tidak memberikan respons dalam waktu 3 detik, permintaan akan dihentikan sehingga thread tidak terus menunggu. Jika kegagalan terjadi berulang kali, Circuit Breaker akan memutus sementara komunikasi dengan modul pembayaran dan sistem bisa langsung memberikan respons alternatif kepada pengguna.
+
+**Trade-off:** Menentukan waktu timeout juga perlu diperhatikan. Kalau waktunya terlalu singkat, transaksi yang sebenarnya berhasil bisa dianggap gagal hanya karena responsnya terlambat. Selain itu, jika sistem pembayaran tidak memiliki mekanisme untuk mencegah transaksi yang sama diproses dua kali, pelanggan bisa saja mencoba melakukan pembayaran lagi karena mengira transaksi sebelumnya gagal. Akibatnya, transaksi yang sama berisiko diproses dua kali dan saldo pelanggan bisa terpotong lebih dari sekali.
 ---
 
 ## Pitfall 3: The Network is Reliable — ditulis oleh Ulil Albab An-Nuha
