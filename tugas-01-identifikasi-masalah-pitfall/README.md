@@ -54,9 +54,9 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| [Fahmi Fajar Maulana] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [Ical Helmizar Tambunan] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [Ulil Albab An-Nuha] | [103072430017] | [pitfall/bagian yang dikerjakan] |
+| Fahmi Fajar Maulana | [nim] | [pitfall/bagian yang dikerjakan] |
+| Ical Helmizar Tambunan | [nim] | [pitfall/bagian yang dikerjakan] |
+| Ulil Albab An-Nuha | 103072430017 | The Network is Reliable |
 
 ## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
 
@@ -78,7 +78,7 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 ---
 
-## Pitfall 3: [The Network is Reliable] — ditulis oleh [Ulil Albab An-Nuha]
+## Pitfall 3: The Network is Reliable — ditulis oleh Ulil Albab An-Nuha
 
 **Bukti di skenario:** Di dalam soal disebutkan tim engineering FoodGo menuliskan asumsi di kodenya seperti #network is always reliable, no need for retry. Selain itu, mereka membuat modul pesanan memanggil modul pembayaran tanpa adanya batas waktu tunggu atau timeout, jadi dibiarkan menunggu tanpa batas waktu.
 
