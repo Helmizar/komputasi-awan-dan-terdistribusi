@@ -54,9 +54,9 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| [nama 1] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [nama 2] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [nama 3] | [nim] | [pitfall/bagian yang dikerjakan] |
+| [Fahmi Fajar Maulana] | [nim] | [pitfall/bagian yang dikerjakan] |
+| [Ical Helmizar Tambunan] | [nim] | [pitfall/bagian yang dikerjakan] |
+| [Ulil Albab An-Nuha] | [103072430017] | [pitfall/bagian yang dikerjakan] |
 
 ## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
 
@@ -78,9 +78,15 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 ---
 
-## Pitfall 3: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 3: [The Network is Reliable] — ditulis oleh [Ulil Albab An-Nuha]
 
-(ulangi struktur di atas)
+**Bukti di skenario:** Di dalam soal disebutkan tim engineering FoodGo menuliskan asumsi di kodenya seperti #network is always reliable, no need for retry. Selain itu, mereka membuat modul pesanan memanggil modul pembayaran tanpa adanya batas waktu tunggu atau timeout, jadi dibiarkan menunggu tanpa batas waktu.
+
+**Kenapa ini keliru:** Karena di dunia nyata, koneksi jaringan antar server tidak aada yang stabil terus menerus. Pasti ada saja momen dimana koneksi mendadak lemot, ada gangguan router, atau ada paket data yang hilang atau biasa disebut packet loss. Kalau kita membuat sistem monolitik di satu mesin mungkin aman aman saja, tapi dalam sistem terdistribusi yang komunikasinya lewat jaringan, berasumsi kalau jaringan bakal selalu lancar tanpa halangan itu adalah sebuah kesalahan besar.
+
+**Solusi desain awal:** Solusi dasarnya, kita wajib memasang Timeout di setiap interaksi antar service. Jadi misalnya dalam 3 detik modul pembayaran tidak memberikan respons, requestnya langsung digagalkan saja (dilempar error ke user) daripada membiarkan server menunggu selamanya. Agar lebih aman, bisa dipadukan dengan mekanisme Retry dengan Exponential Backoff (mencoba kembali tapi dengan jeda waktu yang bertambah) atau Circuit Breaker (langsung memutus koneksi sementara kalau service tujuan terdeteksi sedang down).
+
+**Trade-off:** Kalau kita menerapkan mekanisme Retry, risikonya adalah saat modul pembayaran benar-benar sedang mati atau kewalahan, mencoba mengirimkan request berulang-ulang justru akan menambah beban kerja modul tersebut jadi akan makin parah (bisa memicu cascading failure). Di sisi lain, trade-off dari memasang Timeout yang terlalu cepat adalah user experience bisa terganggu.  Transaksi yang sebenarnya hanya butuh waktu sedikit lebih lama malah terlanjur dibatalkan oleh sistem.
 
 ---
 
