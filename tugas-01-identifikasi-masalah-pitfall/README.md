@@ -83,6 +83,8 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 **Solusi desain awal:** Menerapkan timeout dengan batas waktu tertentu, misalnya maksimal 3 detik, pada komunikasi antar-modul dan menggunakan Circuit Breaker. Jika modul pembayaran tidak memberikan respons dalam waktu 3 detik, permintaan akan dihentikan sehingga thread tidak terus menunggu. Jika kegagalan terjadi berulang kali, Circuit Breaker akan memutus sementara komunikasi dengan modul pembayaran dan sistem bisa langsung memberikan respons alternatif kepada pengguna.
 
 **Trade-off:** Menentukan waktu timeout juga perlu diperhatikan. Kalau waktunya terlalu singkat, transaksi yang sebenarnya berhasil bisa dianggap gagal hanya karena responsnya terlambat. Selain itu, jika sistem pembayaran tidak memiliki mekanisme untuk mencegah transaksi yang sama diproses dua kali, pelanggan bisa saja mencoba melakukan pembayaran lagi karena mengira transaksi sebelumnya gagal. Akibatnya, transaksi yang sama berisiko diproses dua kali dan saldo pelanggan bisa terpotong lebih dari sekali.
+
+
 ---
 
 ## Pitfall 3: The Network is Reliable — ditulis oleh Ulil Albab An-Nuha
