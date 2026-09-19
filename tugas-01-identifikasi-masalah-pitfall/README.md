@@ -54,7 +54,7 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| Fahmi Fajar Maulana | [nim] | [pitfall/bagian yang dikerjakan] |
+| Fahmi Fajar Maulana | 103072400069 | [pitfall/bagian yang dikerjakan] |
 | Ical Helmizar Tambunan | 103072400074 | Latency Is Zero |
 | Ulil Albab An-Nuha | 103072430017 | The Network is Reliable |
 
