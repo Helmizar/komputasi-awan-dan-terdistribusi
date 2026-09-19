@@ -54,21 +54,21 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| Fahmi Fajar Maulana | 103072400069 | [pitfall/bagian yang dikerjakan] |
+| Fahmi Fajar Maulana | 103072400069 | Single Point of Failure |
 | Ical Helmizar Tambunan | 103072400074 | Latency Is Zero |
 | Ulil Albab An-Nuha | 103072430017 | The Network is Reliable |
 
-## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 1: Single Point of Failure — ditulis oleh Fahmi Fajar Maulana
 
-**Bukti di skenario:** [kutip/paraphrase bagian skenario]
+**Bukti di skenario:** Di studi kasus dijelaskan kalau semua modul FoodGo, mulai dari pesanan, pembayaran, sampai notifikasi kurir, masih ditangani oleh satu server dan berjalan dalam satu proses monolitik. Ketika jumlah pesanan sedang banyak, server tersebut menjadi kewalahan.
 
-**Kenapa ini keliru:** [penjelasan]
+**Kenapa ini keliru:** Menurut saya, masalahnya adalah semua bagian sistem terlalu bergantung pada satu server. Jadi kalau server tersebut mulai kewalahan atau mengalami masalah, bagian lain yang sebenarnya tidak bermasalah juga ikut terkena dampaknya. Untuk aplikasi seperti FoodGo yang jumlah penggunanya bisa naik secara tiba-tiba, cara seperti ini cukup berisiko karena semua beban dikumpulkan di satu tempat.
 
-**Dampak ke FoodGo:** [mekanisme kegagalan konkret]
+**Dampak ke FoodGo:** Ketika jam makan siang atau sedang ada promo, pesanan yang masuk pasti lebih banyak dari biasanya. Karena pesanan, pembayaran, dan notifikasi kurir diproses di server yang sama, server harus menangani banyak pekerjaan sekaligus. Akibatnya aplikasi menjadi lambat, beberapa request bisa timeout, dan dalam kondisi yang lebih parah server bisa crash. Kalau server sampai crash, proses pemesanan, pembayaran, dan notifikasi juga ikut terganggu karena semuanya berada di proses yang sama.
 
-**Solusi desain awal:** [usulan solusi]
+**Solusi desain awal:** Salah satu solusinya adalah memisahkan modul pesanan, pembayaran, dan notifikasi menjadi service yang berbeda. Jadi setiap bagian tidak semuanya bergantung pada satu proses yang sama. Selain itu, service yang paling sering digunakan bisa dibuat beberapa instance supaya beban request bisa dibagi dan tidak menumpuk pada satu server saja.
 
-**Trade-off:** [apa yang dikorbankan/risiko dari solusi ini]
+**Trade-off:** Kekurangannya, sistem menjadi lebih rumit dibandingkan sebelumnya. Karena service sudah dipisah, masing-masing service harus berkomunikasi melalui jaringan sehingga perlu menangani masalah seperti koneksi yang lambat atau gagal. Selain itu, proses monitoring dan pengelolaan server juga menjadi lebih banyak.
 
 ---
 
