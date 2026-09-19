@@ -1,14 +1,13 @@
 # Jurnal Proses — Tugas 1
 
-> Isi jurnal ini selama proses diskusi berlangsung, bukan ditulis ulang rapi di akhir. Tulis dengan gaya bebas — poin diskusi, kebuntuan, perubahan pikiran.
-
-## [Tanggal diskusi 1]
-- Peserta: [nama-nama yang hadir]
-- Poin diskusi: ...
-- Perbedaan pendapat (jika ada): ...
-
-## [Tanggal diskusi 2]
-- ...
+## [19 September 2026]
+- Peserta: FAHMI FAJAR MAULANA, ICAL HELMIZAR TAMBUNAN, ULIL ALBAB AN-NUHA
+- Poin diskusi: 
+  -  Membedah Skenario FoodGo: Kami memulai diskusi dengan menganalisis gejala crash pada jam makan siang. Kami sepakat bahwa akar masalahnya bukanlah murni karena spesifikasi server yang kurang memadai, melainkan karena kelemahan arsitektur aplikasi dan asumsi developer yang keliru terhadap kondisi jaringan.
+  -  Identifikasi Masalah Arsitektur: Kami menyoroti masalah struktural di mana modul pesanan, pembayaran, dan notifikasi semuanya disatukan dalam satu server (Single Point of Failure). Kami berdiskusi bahwa jika dibiarkan seperti ini, kelumpuhan pada satu modul (misal pembayaran) akan mematikan seluruh layanan lainnya.
+   - Identifikasi Masalah Ketiadaan Timeout: Kami menganalisis efek domino dari sisi jaringan. Karena tidak ada batas waktu tunggu antar-modul, request pelanggan yang masuk akan terus menumpuk dan menyedot habis memori/thread server (resource exhaustion) saat respons lambat, yang merujuk pada pitfall "Latency is zero".
+   - Identifikasi Asumsi Jaringan Stabil: Kami membedah bukti konkret di skenario berupa komentar #network is always reliable, no need for retry. Kelompok berdiskusi bahwa meniadakan retry sangat berbahaya karena di dunia nyata sering terjadi hilangnya paket data (packet loss), yang merujuk pada pitfall "The network is reliable".
+- Perbedaan pendapat (jika ada): -
 
 ## Review Silang
 - [Nama] mengomentari analisis [Nama lain]: ...
