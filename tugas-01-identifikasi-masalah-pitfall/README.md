@@ -103,7 +103,13 @@ Gunakan [`ANALISIS-TEMPLATE.md`](ANALISIS-TEMPLATE.md) sebagai kerangka — sali
 
 ## Kesimpulan Kelompok
 
-[Ringkasan: jika FoodGo memperbaiki ketiga pitfall ini, apa arsitektur yang disarankan secara garis besar? Kaitkan dengan Tugas 2.]
+Berdasarkan analisis dari ketiga pitfall di atas, akar masalah kelumpuhan aplikasi FoodGo terletak pada penggabungan seluruh beban kerja ke dalam satu titik rentan (Single Point of Failure) yang diperparah oleh asumsi jaringan yang terlalu naif (mengabaikan latensi dan kegagalan jaringan).
+
+Jika FoodGo memperbaiki ketiga masalah ini, arsitektur secara garis besar yang kami sarankan adalah beralih dari sistem Monolitik menjadi Arsitektur Microservices. Modul pesanan, pembayaran, dan notifikasi kurir harus dipisah menjadi service yang berdiri sendiri (decoupled). Untuk mencegah overload, service yang memiliki trafik tinggi (seperti pesanan dan pembayaran) perlu digandakan (horizontal scaling) dan pendistribusian trafiknya diatur menggunakan sebuah Load Balancer.
+
+Namun, karena arsitektur microservices sangat bergantung pada komunikasi jaringan antar-server, pemisahan ini wajib dibekali dengan pola ketahanan sistem (Resiliency Patterns). Setiap komunikasi jaringan antar-modul harus dilindungi oleh Strict Timeout dan Circuit Breaker untuk mencegah efek antrean panjang (thread exhaustion) ketika salah satu service melambat. Selain itu, sistem juga perlu dibekali mekanisme Retry dengan Exponential Backoff yang aman agar sistem kebal terhadap hilangnya paket data (packet loss) sesaat tanpa memicu bahaya retry storm.
+
+Kerangka transisi desain dari sistem monolitik yang rapuh menuju arsitektur microservices yang mandiri, terisolasi, dan tahan banting terhadap kegagalan jaringan inilah yang selanjutnya akan kami rancang dan detailkan lebih lanjut pada Tugas 2 (Perancangan Arsitektur).
 
 ## Rubrik Penilaian (Tugas 1)
 
