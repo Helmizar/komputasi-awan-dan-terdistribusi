@@ -17,18 +17,18 @@ Dengan menggunakan SOA, modul utama pada FoodGo seperti Pesanan, Pembayaran, Kur
 2. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
 ```mermaid
 graph TD
-    Client[Aplikasi Pelanggan] -->|1. HTTP POST (Sync)| Gateway[API Gateway]
-    Gateway -->|2. HTTP Forward (Sync)| OrderSvc[Service Pesanan]
+    Client[Aplikasi Pelanggan] -->|1. HTTP POST - Sinkron| Gateway[API Gateway]
+    Gateway -->|2. HTTP Forward - Sinkron| OrderSvc[Service Pesanan]
     
-    OrderSvc <-->|3. RPC / HTTP (Sync)| PaymentSvc[Service Pembayaran]
+    OrderSvc -->|3. RPC Request - Sinkron| PaymentSvc[Service Pembayaran]
     
-    OrderSvc -->|4. Publish Event 'OrderPaid' (Async)| Broker[(Message Broker)]
+    OrderSvc -->|4. Publish Event - Asinkron| Broker[(Message Broker)]
     
-    Broker -.->|5a. Subscribe Event (Async)| RestoSvc[Service Katalog Resto]
-    Broker -.->|5b. Subscribe Event (Async)| CourierSvc[Service Notifikasi Kurir]
+    Broker -.->|5a. Subscribe Event - Asinkron| RestoSvc[Service Katalog Resto]
+    Broker -.->|5b. Subscribe Event - Asinkron| CourierSvc[Service Notifikasi Kurir]
     
     RestoSvc -->|6. Kirim Notif ke Resto| AppResto[Aplikasi Mitra Resto]
-    CourierSvc -->|7. Cari & Tugaskan Kurir| AppCourier[Aplikasi Kurir]
+    CourierSvc -->|7. Tugaskan Kurir| AppCourier[Aplikasi Kurir]
 ```
 3. Jelaskan alur satu skenario penuh secara end-to-end di diagram (misalnya: pelanggan buat pesanan → bayar → resto terima notifikasi → kurir ditugaskan) — tunjukkan komponen mana berkomunikasi dengan siapa, dan **jenis komunikasinya** (sinkron/asinkron, request-response/event).
 4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
