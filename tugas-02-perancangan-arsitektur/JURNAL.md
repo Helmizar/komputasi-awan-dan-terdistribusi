@@ -10,5 +10,5 @@
 > Wajib diisi sesuai kebijakan Level 2 di [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Tulis "Tidak memakai AI" pada baris pertama jika memang tidak dipakai. Hanya untuk brainstorming ide/outline — bukan untuk kode/analisis/teks akhir.
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
-| 27-09-2026 | ChatGPT | Tolong bantu menentukan apakah FoodGo lebih sesuai menggunakan SOA atau Publish-Subscribe. | AI menyarankan SOA sebagai arsitektur utama dan Publish-Subscribe sebagai pendukung komunikasi event secara asinkron. | Kelompok mempertimbangkan saran tersebut dan memilih kombinasi SOA + Publish-Subscribe sesuai kebutuhan FoodGo. |
+|---|---|---|---|---|
 | ... | ... | ... | ... | ... |
