@@ -1,9 +1,9 @@
 # Jurnal Proses — Tugas 2
 
-## [Tanggal]
-- Opsi arsitektur yang dipertimbangkan: ...
-- Kenapa akhirnya pilih [SOA/Pub-Sub]: ...
-- Revisi diagram (versi 1 → versi 2, apa yang berubah dan kenapa): ...
+## [27 September 2026]
+- Opsi arsitektur yang dipertimbangkan: ada awalnya kami mempertimbangkan untuk menggunakan SOA murni (seluruh service saling memanggil melalui API secara langsung) atau Publish-Subscribe murni (seluruh komunikasi dilempar ke dalam antrean/broker).
+- Kenapa akhirnya pilih [SOA/Pub-Sub]:Kami menyadari SOA murni masih rawan bottleneck karena jika Service Pesanan memanggil Service Kurir secara langsung dan kurir lambat merespons, aplikasi akan delay. Sebaliknya, Pub-Sub murni tidak cocok untuk Service Pembayaran karena pelanggan butuh kepastian berhasil/gagal secara real-time (instan). Akhirnya, kami memilih kombinasi keduanya: SOA untuk Pembayaran (sinkron) agar pelanggan langsung mendapat kepastian, dan Pub-Sub / Message Broker untuk Katalog Resto & Kurir agar proses penyiapan dan pengantaran bisa berjalan paralel di latar belakang tanpa menahan layar aplikasi pelanggan.
+- Revisi diagram (versi 1 → versi 2, apa yang berubah dan kenapa): -
 
 ## Log Penggunaan AI (Level 2)
 
