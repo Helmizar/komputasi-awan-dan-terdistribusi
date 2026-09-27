@@ -14,9 +14,9 @@ Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan t
 Selain itu, kami menggunakan konsep Publish-Subscribe untuk menangani komunikasi yang bersifat asinkron, terutama pada proses pengiriman event dan notifikasi. Contohnya ketika pesanan berhasil dibuat, Service Pesanan dapat mengirimkan event melalui Message Broker. Service Kurir/Notifikasi yang membutuhkan informasi tersebut dapat menerima event tanpa harus berkomunikasi secara langsung dengan Service Pesanan.
 Dengan menggunakan SOA, modul utama pada FoodGo seperti Pesanan, Pembayaran, Kurir/Notifikasi, dan Katalog Resto dapat dipisahkan menjadi beberapa service. Setiap service memiliki tugas masing-masing sehingga pengembangan atau perubahan pada satu service tidak harus mengubah seluruh sistem.
 
-3. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
-4. Jelaskan alur satu skenario penuh secara end-to-end di diagram (misalnya: pelanggan buat pesanan → bayar → resto terima notifikasi → kurir ditugaskan) — tunjukkan komponen mana berkomunikasi dengan siapa, dan **jenis komunikasinya** (sinkron/asinkron, request-response/event).
-5. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
+2. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
+3. Jelaskan alur satu skenario penuh secara end-to-end di diagram (misalnya: pelanggan buat pesanan → bayar → resto terima notifikasi → kurir ditugaskan) — tunjukkan komponen mana berkomunikasi dengan siapa, dan **jenis komunikasinya** (sinkron/asinkron, request-response/event).
+4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
 
 ## Cara Membuat Diagram (Gratis, Cukup Laptop)
 
