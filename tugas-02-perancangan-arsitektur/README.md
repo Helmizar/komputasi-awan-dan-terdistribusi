@@ -15,6 +15,21 @@ Selain itu, kami menggunakan konsep Publish-Subscribe untuk menangani komunikasi
 Dengan menggunakan SOA, modul utama pada FoodGo seperti Pesanan, Pembayaran, Kurir/Notifikasi, dan Katalog Resto dapat dipisahkan menjadi beberapa service. Setiap service memiliki tugas masing-masing sehingga pengembangan atau perubahan pada satu service tidak harus mengubah seluruh sistem.
 
 2. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
+```mermaid
+graph TD
+    Client[Aplikasi Pelanggan] -->|1. HTTP POST (Sync)| Gateway[API Gateway]
+    Gateway -->|2. HTTP Forward (Sync)| OrderSvc[Service Pesanan]
+    
+    OrderSvc <-->|3. RPC / HTTP (Sync)| PaymentSvc[Service Pembayaran]
+    
+    OrderSvc -->|4. Publish Event 'OrderPaid' (Async)| Broker[(Message Broker)]
+    
+    Broker -.->|5a. Subscribe Event (Async)| RestoSvc[Service Katalog Resto]
+    Broker -.->|5b. Subscribe Event (Async)| CourierSvc[Service Notifikasi Kurir]
+    
+    RestoSvc -->|6. Kirim Notif ke Resto| AppResto[Aplikasi Mitra Resto]
+    CourierSvc -->|7. Cari & Tugaskan Kurir| AppCourier[Aplikasi Kurir]
+```
 3. Jelaskan alur satu skenario penuh secara end-to-end di diagram (misalnya: pelanggan buat pesanan → bayar → resto terima notifikasi → kurir ditugaskan) — tunjukkan komponen mana berkomunikasi dengan siapa, dan **jenis komunikasinya** (sinkron/asinkron, request-response/event).
 4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
 
