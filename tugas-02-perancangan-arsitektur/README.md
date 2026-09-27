@@ -44,7 +44,8 @@ graph TD
    Eksekusi Paralel: Service Resto langsung meneruskan pesanan ke layar dapur mitra resto, sementara di saat yang bersamaan Service Kurir mengeksekusi algoritma pencarian kurir terdekat. Keduanya berjalan paralel tanpa mengganggu jalannya Service Pesanan.
    
 4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
-   ** JAWAB :**
+   
+   **JAWAB :**
 
    Mengatasi Masalah Coupling (Keterikatan Beban & Waktu) Kombinasi gaya arsitektur SOA dan Publish-Subscribe terbukti sangat efektif untuk mengatasi masalah coupling atau ketergantungan erat yang terjadi pada sistem monolitik di Tugas 1. Secara arsitektur, pendekatan ini memberikan isolasi kegagalan (fault isolation). Karena setiap modul sekarang berjalan sebagai servis yang terpisah, jika Service Notifikasi Kurir tiba-tiba crash akibat lonjakan trafik, resource memori dan CPU milik Service Pesanan tidak akan ikut terkuras, sehingga pelanggan tetap bisa membuat pesanan dan melakukan pembayaran tanpa hambatan. Di sisi lain, penggunaan Message Broker memberikan keuntungan berupa decoupling dari segi waktu dan logika. Saat Service Pesanan selesai memotong saldo, ia tidak perlu lagi menunggu balasan apa pun dari Service Resto atau Kurir; ia cukup melempar event ke broker. Seandainya Service Resto sedang mati atau sedang diperbarui, pesan pesanan tersebut akan tertampung dengan aman di dalam broker hingga servis tersebut menyala kembali untuk memprosesnya. Hal ini sepenuhnya menghilangkan risiko sistem yang "menunggu selamanya" seperti pada skenario awal.
 
