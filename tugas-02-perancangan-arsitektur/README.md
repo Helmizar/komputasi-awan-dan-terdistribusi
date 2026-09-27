@@ -37,12 +37,11 @@ graph TD
    **JAWAB :**
 
    Berikut adalah alur komunikasi ketika pelanggan membuat pesanan hingga pesanan diterima oleh restoran dan kurir:
-
-Membuat Pesanan : Pelanggan menekan tombol "Pesan", aplikasi mengirimkan request ke API Gateway yang diteruskan ke Service Pesanan.
-Validasi Pembayaran : Service Pesanan melakukan komunikasi sinkron (request-response) dengan Service Pembayaran untuk memotong saldo e-wallet pelanggan. Service Pesanan akan "menunggu"  hingga Service Pembayaran membalas sukses/gagal.
-Publish Event : Setelah pembayaran sukses, Service Pesanan tidak memanggil Service Resto/Kurir secara langsung. Sebaliknya, ia mengirim (publish) pesan "OrderPaid" (Pesanan Dibayar) ke Message Broker , lalu langsung merespons "Pesanan Berhasil" ke layar HP pelanggan.
-Subscribe Event : Service Katalog Resto dan Service Notifikasi Kurir yang terhubung ke Message Broker akan mendeteksi event "OrderPaid" tersebut.
-Eksekusi Paralel: Service Resto langsung meneruskan pesanan ke layar dapur mitra resto, sementara di saat yang bersamaan Service Kurir mengeksekusi algoritma pencarian kurir terdekat. Keduanya berjalan paralel tanpa mengganggu jalannya Service Pesanan.
+   Membuat Pesanan : Pelanggan menekan tombol "Pesan", aplikasi mengirimkan request ke API Gateway yang diteruskan ke Service Pesanan.
+   Validasi Pembayaran : Service Pesanan melakukan komunikasi sinkron (request-response) dengan Service Pembayaran untuk memotong saldo e-wallet pelanggan. Service Pesanan akan "menunggu"  hingga Service Pembayaran membalas sukses/gagal.
+   Publish Event : Setelah pembayaran sukses, Service Pesanan tidak memanggil Service Resto/Kurir secara langsung. Sebaliknya, ia mengirim (publish) pesan "OrderPaid" (Pesanan Dibayar) ke Message Broker , lalu langsung merespons "Pesanan Berhasil" ke layar HP pelanggan.
+   Subscribe Event : Service Katalog Resto dan Service Notifikasi Kurir yang terhubung ke Message Broker akan mendeteksi event "OrderPaid" tersebut.
+   Eksekusi Paralel: Service Resto langsung meneruskan pesanan ke layar dapur mitra resto, sementara di saat yang bersamaan Service Kurir mengeksekusi algoritma pencarian kurir terdekat. Keduanya berjalan paralel tanpa mengganggu jalannya Service Pesanan.
    
 5. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
 
