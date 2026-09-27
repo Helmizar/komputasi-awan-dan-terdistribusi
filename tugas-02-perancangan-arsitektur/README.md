@@ -44,8 +44,16 @@ graph TD
    Eksekusi Paralel: Service Resto langsung meneruskan pesanan ke layar dapur mitra resto, sementara di saat yang bersamaan Service Kurir mengeksekusi algoritma pencarian kurir terdekat. Keduanya berjalan paralel tanpa mengganggu jalannya Service Pesanan.
    
 4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
+   A. Mengatasi Masalah Coupling (Keterikatan Beban & Waktu) Kombinasi SOA dan Publish-Subscribe terbukti mampu mengatasi masalah coupling (ketergantungan erat) pada sistem monolitik di Tugas 1, melalui dua cara:
 
+Isolasi Kegagalan (Fault Isolation) via SOA: Karena setiap modul sekarang berjalan sebagai servis yang terpisah, jika Service Notifikasi Kurir tiba-tiba crash karena beban request yang tinggi, CPU dan RAM milik Service Pesanan tidak akan ikut tersedot. Pelanggan tetap bisa melakukan pemesanan dan pembayaran dengan lancar.
+Decoupling Waktu & Logika via Pub-Sub: Saat Service Pesanan selesai memotong saldo, ia tidak perlu menunggu balasan dari Service Resto atau Kurir. Ia cukup menaruh pesan di Message Broker. Seandainya Service Resto sedang down atau sedang di-deploy ulang (di-update), pesan tersebut akan tersimpan aman di Message Broker. Saat Service Resto nyala kembali, ia tinggal mengambil pesan yang tertunda tersebut. Tidak ada lagi sistem yang "menunggu selamanya" seperti di skenario awal.
 
+B. Analisis Trade-off (Risiko dari Arsitektur Baru) Walaupun sistem menjadi lebih kuat dan mandiri, arsitektur yang terdistribusi ini membawa beberapa kelemahan dan kompleksitas baru yang harus dikelola oleh tim FoodGo:
+
+Kompleksitas Debugging dan Tracing (Pelacakan Error): Pada aplikasi monolitik, melacak pesanan yang gagal sangat mudah karena semua log berada di satu tempat yang berurutan. Dengan skema Pub-Sub, alurnya tidak lagi linear. Jika restoran menelepon CS karena tidak menerima pesanan pelanggan, tim developer harus mencari error di banyak tempat: apakah gagal di Service Pesanan? Menyangkut di API Gateway? Macet di Message Broker? Atau Service Katalog Resto-nya yang rusak?
+Latensi Jaringan Tambahan (Network Overhead): Komunikasi antar-servis yang dulunya hanya berupa pemanggilan fungsi internal (sangat cepat), kini harus melewati jaringan (HTTP/RPC) dan perantara (Message Broker). Ini menambah risiko terkait gangguan jaringan (packet loss atau koneksi lambat).
+Inkonsistensi Data Sementara (Eventual Consistency): Karena proses pengiriman notifikasi ke kurir dan resto berjalan secara asinkron (di latar belakang), ada jeda waktu kecil di mana data pelanggan di aplikasi mungkin sudah berstatus "Dibayar", tapi sistem resto belum menerimanya. Selain itu, tim juga harus menangani kasus jika pesan dari broker tidak sengaja terkirim dua kali agar kurir yang ditugaskan tidak ganda (idempotency).
 
 ## Cara Membuat Diagram (Gratis, Cukup Laptop)
 
