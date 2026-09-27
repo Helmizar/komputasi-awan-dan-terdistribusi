@@ -9,12 +9,12 @@ Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan t
 ## Tugas Kelompok
 
 1. Pilih **satu** gaya arsitektur utama: **Service-Oriented Architecture (SOA)** atau **Publish-Subscribe**. Boleh dikombinasikan (mis. SOA untuk service inti + Pub-Sub untuk notifikasi), tapi harus dijustifikasi kenapa kombinasi ini yang dipilih.
-
-**Jawaban:** Kami memilih Service-Oriented Architecture (SOA) sebagai arsitektur utama dan Publish-Subscribe sebagai pendukung komunikasi antar-service. Pemilihan ini disesuaikan dengan permasalahan pada sistem FoodGo yang sebelumnya masih menggunakan arsitektur monolitik, sehingga setiap modul masih saling bergantung dan ketika dilakukan perubahan atau deployment pada satu bagian, modul lainnya juga dapat ikut terdampak.Dengan menggunakan SOA, modul utama pada FoodGo seperti Pesanan, Pembayaran, Kurir/Notifikasi, dan Katalog Resto dapat dipisahkan menjadi beberapa service. Setiap service memiliki tugas masing-masing sehingga pengembangan atau perubahan pada satu service tidak harus mengubah seluruh sistem.
+   **JAWAB :**
+   Kami memilih Service-Oriented Architecture (SOA) sebagai arsitektur utama dan Publish-Subscribe sebagai pendukung komunikasi antar-service. Pemilihan ini disesuaikan dengan permasalahan pada sistem FoodGo yang sebelumnya masih menggunakan arsitektur monolitik, sehingga setiap modul masih saling bergantung dan ketika dilakukan perubahan atau deployment pada satu bagian, modul lainnya juga dapat ikut terdampak.Dengan menggunakan SOA, modul utama pada FoodGo seperti Pesanan, Pembayaran, Kurir/Notifikasi, dan Katalog Resto dapat dipisahkan menjadi beberapa service. Setiap service memiliki tugas masing-masing sehingga pengembangan atau perubahan pada satu service tidak harus mengubah seluruh sistem.
 Selain itu, kami menggunakan konsep Publish-Subscribe untuk menangani komunikasi yang bersifat asinkron, terutama pada proses pengiriman event dan notifikasi. Contohnya ketika pesanan berhasil dibuat, Service Pesanan dapat mengirimkan event melalui Message Broker. Service Kurir/Notifikasi yang membutuhkan informasi tersebut dapat menerima event tanpa harus berkomunikasi secara langsung dengan Service Pesanan.
 Dengan menggunakan SOA, modul utama pada FoodGo seperti Pesanan, Pembayaran, Kurir/Notifikasi, dan Katalog Resto dapat dipisahkan menjadi beberapa service. Setiap service memiliki tugas masing-masing sehingga pengembangan atau perubahan pada satu service tidak harus mengubah seluruh sistem.
 
-2. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
+3. Gambarkan minimal 4 komponen berikut dan interaksinya: modul Pesanan, modul Pembayaran, modul Kurir/Notifikasi, modul Katalog Resto (dan message broker/API gateway jika relevan).
 ```mermaid
 graph TD
     Client[Aplikasi Pelanggan] -->|1. HTTP POST - Sinkron| Gateway[API Gateway]
@@ -31,6 +31,7 @@ graph TD
     CourierSvc -->|7. Tugaskan Kurir| AppCourier[Aplikasi Kurir]
 ```
 3. Jelaskan alur satu skenario penuh secara end-to-end di diagram (misalnya: pelanggan buat pesanan → bayar → resto terima notifikasi → kurir ditugaskan) — tunjukkan komponen mana berkomunikasi dengan siapa, dan **jenis komunikasinya** (sinkron/asinkron, request-response/event).
+   
 **JAWAB :**
 Berikut adalah alur komunikasi ketika pelanggan membuat pesanan hingga pesanan diterima oleh restoran dan kurir:
 
@@ -41,6 +42,8 @@ Subscribe Event : Service Katalog Resto dan Service Notifikasi Kurir yang terhub
 Eksekusi Paralel: Service Resto langsung meneruskan pesanan ke layar dapur mitra resto, sementara di saat yang bersamaan Service Kurir mengeksekusi algoritma pencarian kurir terdekat. Keduanya berjalan paralel tanpa mengganggu jalannya Service Pesanan.
 
 4. Analisis tertulis: kenapa gaya ini mengatasi masalah *coupling* dari Tugas 1, dan apa trade-off-nya (mis. Pub-Sub menambah kompleksitas debugging karena alur tidak linear).
+
+
 
 ## Cara Membuat Diagram (Gratis, Cukup Laptop)
 
