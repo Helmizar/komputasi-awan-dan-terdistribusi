@@ -11,4 +11,6 @@
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+| 27/09/2026 | ChatGPT | Saya Memiliki case Tolong bantu menentukan apakah di case FoodGo berikut lebih sesuai menggunakan SOA atau Publish-Subscribe.  |AI menyarankan SOA sebagai arsitektur utama dan Publish-Subscribe sebagai pendukung komunikasi event secara asinkron.| Kelompok kami mempertimbangkan saran tersebut dan memilih kombinasi SOA + Publish-Subscribe sesuai kebutuhan FoodGo. |
+| 27/09/2026 | ChatGPT | ... | ... | ... |
+| 27/09/2026 | ChatGPT | ... | ... | ... |
