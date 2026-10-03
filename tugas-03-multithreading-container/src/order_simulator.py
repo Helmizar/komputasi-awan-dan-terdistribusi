@@ -16,8 +16,9 @@ NUM_WORKERS = 10        # jumlah thread pekerja
 # Sengaja rawan race condition jika diakses tanpa proteksi.
 processed_count = 0
 
-# TODO 1: Buat objek Lock di sini untuk melindungi `processed_count`.
+# TODO 1: Buat objek Lock di sini untuk melindungi processed_count.
 # lock = threading.Lock()
+order_lock = threading.Lock()
 
 
 def process_order(order_id: int) -> None:
@@ -28,9 +29,10 @@ def process_order(order_id: int) -> None:
     time.sleep(random.uniform(0.001, 0.01))
 
     # TODO 2: Tambahkan increment `processed_count` DI SINI.
-    temp = processed_count
-    time.sleep(0.0001)
-    processed_count = temp + 1
+    with order_lock:
+        temp = processed_count
+        time.sleep(0.0001)  # Memaksa thread tertidur sebentar
+        processed_count = temp + 1
     # Langkah 1: jalankan dulu tanpa lock (increment biasa: processed_count += 1)
     #            dan buktikan hasil akhirnya sering salah (< NUM_ORDERS).
     # Langkah 2: bungkus increment dengan `with lock:` dan buktikan hasilnya
@@ -53,12 +55,12 @@ def main() -> None:
     # start semua thread, lalu join semua thread sebelum lanjut.
     threads = []
     # ... isi logika pembagian tugas & pembuatan thread di sini ...
-    chunk_size = NUM_ORDERS // NUM_WORKERS
+    chunk_size = NUM_ORDERS // NUM_WORKERS #Kita membagi 100 pesanan menjadi jatah 10 pesanan per orang.
     for i in range(NUM_WORKERS):
-        chunk = order_ids[i * chunk_size : (i + 1) * chunk_size]
-        t = threading.Thread(target=worker, args=(chunk,))
+        chunk = order_ids[i * chunk_size : (i + 1) * chunk_size] #Kita membungkus jatah 10 pesanan tersebut ke dalam satu paket (chunk).
+        t = threading.Thread(target=worker, args=(chunk,)) #Kita memanggil 1 pekerja (thread) dan memberikannya 1 paket pesanan tersebut.
         threads.append(t)
-        t.start()
+        t.start() #Kita menyuruh pekerja tersebut untuk mulai bekerja sekarang juga secara serentak (bersamaan).
 
     for t in threads:
         t.join()
