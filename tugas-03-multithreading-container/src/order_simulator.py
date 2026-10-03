@@ -28,12 +28,15 @@ def process_order(order_id: int) -> None:
     time.sleep(random.uniform(0.001, 0.01))
 
     # TODO 2: Tambahkan increment `processed_count` DI SINI.
+    temp = processed_count
+    time.sleep(0.0001)
+    processed_count = temp + 1
     # Langkah 1: jalankan dulu tanpa lock (increment biasa: processed_count += 1)
     #            dan buktikan hasil akhirnya sering salah (< NUM_ORDERS).
     # Langkah 2: bungkus increment dengan `with lock:` dan buktikan hasilnya
     #            selalu tepat NUM_ORDERS. Simpan bukti kedua kondisi ini
     #            di JURNAL.md / folder bukti/.
-    pass
+    
 
 
 def worker(order_ids: list) -> None:
@@ -50,6 +53,12 @@ def main() -> None:
     # start semua thread, lalu join semua thread sebelum lanjut.
     threads = []
     # ... isi logika pembagian tugas & pembuatan thread di sini ...
+    chunk_size = NUM_ORDERS // NUM_WORKERS
+    for i in range(NUM_WORKERS):
+        chunk = order_ids[i * chunk_size : (i + 1) * chunk_size]
+        t = threading.Thread(target=worker, args=(chunk,))
+        threads.append(t)
+        t.start()
 
     for t in threads:
         t.join()
