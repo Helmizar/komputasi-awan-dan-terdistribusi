@@ -53,13 +53,15 @@ tugas-03-multithreading-container/
 ## Jawaban
 
 1. Analisis Simulasi Race Condition & Perbaikannya
+   
    Dalam simulasi sistem pesanan FoodGo yang kami buat, kami mendapati bahwa pemrosesan pesanan yang dijalankan secara serentak (konkuren) tanpa mekanisme sinkronisasi memicu terjadinya Race Condition. Saat beberapa thread membaca dan memperbarui variabel global (processed_count) di waktu yang bersamaan, data akan saling menimpa (overwrite). Akibatnya, dari 100 pesanan yang masuk, sistem terkadang hanya mencatat 59 atau 70 pesanan yang selesai. Perbaikannya Kami menyelesaikan masalah ini dengan mengimplementasikan objek threading.Lock(). Dengan adanya Lock, bagian kode yang rawan (saat menambahkan jumlah pesanan) dikunci alias hanya boleh diakses oleh satu thread pada satu waktu secara bergantian (mutual exclusion). Hasilnya, simulasi berjalan akurat dan selalu memproses genap 100 pesanan.
 
-2. Analisis Efisiensi: Kenapa Menggunakan Threading dan Bukan Multiprocessing?
+3. Analisis Efisiensi: Kenapa Menggunakan Threading dan Bukan Multiprocessing?
+   
    Pada studi kasus, disebutkan bahwa server FoodGo boros sumber daya dan kehabisan memori saat menerima 100 pesanan bersamaan. Akar masalahnya adalah sistem lama menggunakan Proses OS (seperti fork()) untuk setiap pesanan. Membuat proses OS baru adalah tugas yang sangat berat (heavyweight). Setiap proses OS membutuhkan alokasi memori (RAM) yang terisolasi dan sumber daya yang besar dari sistem operasi untuk berjalan. Jika 100 pesanan masuk, server harus menduplikasi 100 alokasi memori penuh, yang berujung pada kehabisan kapasitas RAM dan server crash.
 
    Solusi dengan Multithreading:
-   Kami mengubah penanganan pesanan menggunakan pendekatan Multithreading. Berbeda dengan proses OS, thread adalah unit eksekusi yang jauh lebih ringan (lightweight). Keunggulan utamanya adalah semua thread tersebut berjalan di dalam *satu proses yang sama dan berbagi ruang memori yang sama (shared memory).
+   Kami mengubah penanganan pesanan menggunakan pendekatan Multithreading. Berbeda dengan proses OS, thread adalah unit eksekusi yang jauh lebih ringan (lightweight). Keunggulan utamanya adalah semua thread tersebut berjalan di dalam satu proses yang sama dan berbagi ruang memori yang sama (shared memory).
    Dengan multithreading, ketika ada 100 pesanan masuk, server FoodGo cukup menjalankan 1 proses utama dan membagi tugasnya kepada 10-100 thread. Karena thread tidak menduplikasi memori, beban RAM server turun secara drastis, perpindahan tugas antar pekerja (context switching) menjadi jauh lebih cepat, dan server tidak lagi mengalami kehabisan resource meskipun diserbu oleh pesanan yang masif.
 
 ## Rubrik Penilaian (Tugas 3)
