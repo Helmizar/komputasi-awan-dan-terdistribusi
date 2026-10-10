@@ -1,14 +1,19 @@
 # Jurnal Proses — Tugas 4
 
 ## Jalur yang dipilih
-- [RPC / MQ / keduanya], alasan: ...
+- Keduanya (RPC dan MQ), alasan: Saya memilih kedua jalur untuk memahami perbedaan komunikasi sinkron dan asinkron pada sistem FoodGo. RPC digunakan ketika suatu modul membutuhkan respons secara langsung dari modul lain, sedangkan Message Queue (MQ) menggunakan RabbitMQ untuk mengirim pesan secara asinkron tanpa mengharuskan pengirim menunggu pesan selesai diproses oleh penerima. Dengan mengerjakan kedua jalur, saya dapat memahami penerapan masing-masing pola komunikasi sesuai kebutuhan sistem.
 
 ## Kendala teknis
 - Error saat setup (mis. koneksi RabbitMQ ditolak, port bentrok): ...
 
 ## Uji "pesan tidak hilang" (khusus Jalur B)
-- Langkah uji: matikan consumer → jalankan publisher → nyalakan consumer
-- Hasil yang diamati: ...
+- Langkah uji:Langkah uji:
+Mematikan consumer agar tidak menerima pesan.
+Menjalankan publisher untuk mengirim pesan ke antrean pembayaran_berhasil.
+Memeriksa RabbitMQ Management untuk melihat apakah pesan tersimpan dalam antrean.
+Menjalankan consumer kembali.
+Memeriksa apakah pesan yang tertunda berhasil diterima dan diproses.
+- Hasil yang diamati: 
 
 ## Log Penggunaan AI (Level 2)
 
