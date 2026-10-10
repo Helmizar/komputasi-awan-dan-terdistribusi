@@ -8,11 +8,11 @@
 
 ## Uji "pesan tidak hilang" (khusus Jalur B)
 - Langkah uji:Langkah uji:
-Mematikan consumer agar tidak menerima pesan.
-Menjalankan publisher untuk mengirim pesan ke antrean pembayaran_berhasil.
-Memeriksa RabbitMQ Management untuk melihat apakah pesan tersimpan dalam antrean.
-Menjalankan consumer kembali.
-Memeriksa apakah pesan yang tertunda berhasil diterima dan diproses.
+  1.Mematikan consumer agar tidak menerima pesan.
+  2.Menjalankan publisher untuk mengirim pesan ke antrean pembayaran_berhasil.
+  3.Memeriksa RabbitMQ Management untuk melihat apakah pesan tersimpan dalam antrean.
+  4.Menjalankan consumer kembali.
+  5.Memeriksa apakah pesan yang tertunda berhasil diterima dan diproses.
 - Hasil yang diamati:Publisher berhasil dijalankan dan menghasilkan tiga event pembayaran untuk user1 sebesar Rp20.000, user2 sebesar Rp40.000, dan user3 sebesar Rp60.000. Setelah consumer dijalankan kembali, ketiga event tersebut berhasil diterima dan ditampilkan sebagai notifikasi pembayaran oleh modul Kurir/Notifikasi.
 Hasil pengujian menunjukkan bahwa pesan yang dikirim oleh publisher dapat diterima oleh consumer setelah consumer dijalankan kembali. Hal ini menunjukkan bahwa RabbitMQ memungkinkan pengiriman pesan secara asinkron sehingga publisher tidak harus menunggu consumer aktif untuk mengirimkan event pembayaran. 
 
