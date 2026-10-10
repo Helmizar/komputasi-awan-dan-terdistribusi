@@ -48,6 +48,13 @@ Dashboard manajemen RabbitMQ (untuk lihat antrean secara visual) otomatis aktif 
 3. Untuk Jalur B, matikan dulu `consumer.py`, jalankan `publisher.py` beberapa kali, lalu nyalakan `consumer.py` — buktikan pesan **tetap diproses** (tidak hilang) karena antrean menyimpannya. Ini adalah inti pembelajaran *asynchronous decoupling*.
 4. Tulis analisis: kenapa jalur ini (RPC atau MQ) cocok untuk skenario yang kalian pilih, dan apa yang terjadi jika dipakai untuk skenario yang salah (mis. RPC dipakai untuk notifikasi kurir → modul pembayaran ikut lambat kalau kurir down).
 
+## Jawaban Analisis soal 4
+Berdasarkan eksperimen Jalur A dan Jalur B yang telah kami lakukan, kami menyimpulkan bahwa kedua arsitektur ini memiliki peruntukannya masing-masing dalam studi kasus FoodGo.
+
+1. Kesesuaian RPC (Sinkronus) untuk Modul Pembayaran Pemanggilan dari Modul Pesanan ke Modul Pembayaran sangat membutuhkan kepastian instan (immediate consistency). Modul Pesanan wajib menunggu konfirmasi apakah saldo pelanggan cukup atau tidak sebelum meresmikan status pesanan. Sesuai dengan hasil uji coba Jalur A (RPC), client akan berhenti sejenak (blocking) untuk menanti respons pasti dari server. Sebaliknya, jika skenario ini dibalik dengan menggunakan komunikasi asinkronus (MQ) untuk pembayaran, risiko bisnisnya akan sangat besar. Jika Modul Pesanan hanya melempar antrean cek saldo ke Message Queue dan langsung menganggap pesanan berhasil, dapur restoran bisa saja sudah telanjur memasak makanan tersebut. Saat kemudian terdeteksi bahwa saldonya ternyata kurang, makanan sudah telanjur dibuat dan perusahaan akan mengalami kerugian operasional akibat pesanan fiktif.
+
+2. Kesesuaian Message Queue (Asinkronus) untuk Modul Notifikasi Kurir Setelah pembayaran dipastikan sukses melalui RPC, tugas pencarian dan pemberian notifikasi kepada kurir adalah proses sekunder yang bisa dikerjakan di latar belakang. Pelanggan tidak perlu dipaksa menatap layar loading di ponselnya hanya untuk menunggu driver ditemukan. Seperti yang kami buktikan pada eksperimen Jalur B, ketika kami sengaja mematikan consumer.py (simulasi Modul Kurir sedang mati/ down), Modul Pembayaran (publisher.py) tetap bisa beroperasi mengirim event dengan cepat tanpa mengalami error. Pesan notifikasi tersebut diamankan oleh antrean RabbitMQ dan langsung diproses begitu consumer dinyalakan kembali. Apabila pola ini keliru dan memaksakan penggunaan RPC untuk memanggil Modul Kurir, kedua modul tersebut akan terikat secara ketat (tightly coupled). Akibatnya, jika server kurir kebetulan mati, Modul Pembayaran akan ikut menggantung (hang) atau mengalami timeout, membuat pelanggan gagal melakukan transaksi sama sekali hanya karena sistem pencarian kurir sedang bermasalah.
+
 ## Struktur Submission
 
 ```
