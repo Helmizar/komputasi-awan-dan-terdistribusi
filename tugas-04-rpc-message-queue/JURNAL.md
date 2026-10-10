@@ -4,7 +4,7 @@
 - Keduanya (RPC dan MQ), alasan: Saya memilih kedua jalur untuk memahami perbedaan komunikasi sinkron dan asinkron pada sistem FoodGo. RPC digunakan ketika suatu modul membutuhkan respons secara langsung dari modul lain, sedangkan Message Queue (MQ) menggunakan RabbitMQ untuk mengirim pesan secara asinkron tanpa mengharuskan pengirim menunggu pesan selesai diproses oleh penerima. Dengan mengerjakan kedua jalur, saya dapat memahami penerapan masing-masing pola komunikasi sesuai kebutuhan sistem.
 
 ## Kendala teknis
-- Error saat setup (mis. koneksi RabbitMQ ditolak, port bentrok): ...
+- 
 
 ## Uji "pesan tidak hilang" (khusus Jalur B)
 - Langkah uji:Langkah uji:
@@ -13,7 +13,8 @@ Menjalankan publisher untuk mengirim pesan ke antrean pembayaran_berhasil.
 Memeriksa RabbitMQ Management untuk melihat apakah pesan tersimpan dalam antrean.
 Menjalankan consumer kembali.
 Memeriksa apakah pesan yang tertunda berhasil diterima dan diproses.
-- Hasil yang diamati: 
+- Hasil yang diamati:Publisher berhasil dijalankan dan menghasilkan tiga event pembayaran untuk user1 sebesar Rp20.000, user2 sebesar Rp40.000, dan user3 sebesar Rp60.000. Setelah consumer dijalankan kembali, ketiga event tersebut berhasil diterima dan ditampilkan sebagai notifikasi pembayaran oleh modul Kurir/Notifikasi.
+Hasil pengujian menunjukkan bahwa pesan yang dikirim oleh publisher dapat diterima oleh consumer setelah consumer dijalankan kembali. Hal ini menunjukkan bahwa RabbitMQ memungkinkan pengiriman pesan secara asinkron sehingga publisher tidak harus menunggu consumer aktif untuk mengirimkan event pembayaran. 
 
 ## Log Penggunaan AI (Level 2)
 
