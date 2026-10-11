@@ -1,7 +1,7 @@
 # Jurnal Proses — Tugas 4
 
 ## Jalur yang dipilih
-- Keduanya (RPC dan MQ), alasan: Saya memilih kedua jalur untuk memahami perbedaan komunikasi sinkron dan asinkron pada sistem FoodGo. RPC digunakan ketika suatu modul membutuhkan respons secara langsung dari modul lain, sedangkan Message Queue (MQ) menggunakan RabbitMQ untuk mengirim pesan secara asinkron tanpa mengharuskan pengirim menunggu pesan selesai diproses oleh penerima. Dengan mengerjakan kedua jalur, saya dapat memahami penerapan masing-masing pola komunikasi sesuai kebutuhan sistem.
+- Keduanya (RPC dan MQ), alasan: Kami memilih kedua jalur untuk memahami perbedaan komunikasi sinkron dan asinkron pada sistem FoodGo. RPC digunakan ketika suatu modul membutuhkan respons secara langsung dari modul lain, sedangkan Message Queue (MQ) menggunakan RabbitMQ untuk mengirim pesan secara asinkron tanpa mengharuskan pengirim menunggu pesan selesai diproses oleh penerima. Dengan mengerjakan kedua jalur, saya dapat memahami penerapan masing-masing pola komunikasi sesuai kebutuhan sistem.
 
 ## Kendala teknis
 - 
