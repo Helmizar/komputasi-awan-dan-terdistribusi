@@ -7,7 +7,7 @@
 - 
 
 ## Uji "pesan tidak hilang" (khusus Jalur B)
-- Langkah uji:Langkah uji:
+- Langkah uji:
   - Mematikan consumer agar tidak menerima pesan.
   - Menjalankan publisher untuk mengirim pesan ke antrean pembayaran_berhasil.
   - Memeriksa RabbitMQ Management untuk melihat apakah pesan tersimpan dalam antrean.
