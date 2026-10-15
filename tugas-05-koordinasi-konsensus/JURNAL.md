@@ -1,7 +1,7 @@
 # Jurnal Proses — Tugas 5
 
 ## Implementasi Bully
-- Kendala saat mengisi TODO 1-4: ...
+- Kendala saat mengisi TODO 1-4: Tantangan utama ada pada penanganan waktu tunggu (timeout) saat node menunggu balasan pesan OK. Jika ditunggu secara sekuensial tanpa pengaman, proses bisa tertahan (blocking). Solusinya adalah menggunakan objek threading.Event() dengan batas waktu wait(timeout=ELECTION_TIMEOUT). Selain itu, saat sebuah node menerima pesan ELECTION dan membalas OK, proses pemilihan diri sendiri (start_election) harus dijalankan di thread terpisah (asynchronous thread) agar tidak mengunci socket handler utama.
 
 ## Skenario 1: Start normal
 - Leader yang terpilih: ...
