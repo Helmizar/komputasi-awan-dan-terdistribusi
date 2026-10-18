@@ -36,6 +36,16 @@ python3 src/node.py --id 5 --port 5005 --peers 5001,5002,5003,5004
 2. **Leader mati**: matikan (Ctrl+C) proses node leader (node 5), amati node lain mendeteksi leader hilang dan memicu election baru. Catat leader baru yang terpilih (harusnya node 4).
 3. Simpan log terminal (screenshot atau `> log_nodeX.txt` redirect) dari kedua skenario ke folder `bukti/`.
 
+### Analisis 
+#### Mengapa perlu leader?
+Pada kasus FoodGo, dua server pesanan yang berjalan paralel tanpa koordinasi dapat menyebabkan masalah serius. Pertama, dua server bisa memproses pesanan yang sama secara bersamaan sehingga terjadi double processing, misalnya satu pesanan dikirim ke dua kurir berbeda. Kedua, karena jam fisik tiap mesin tidak pernah sinkron sempurna (clock drift), server A dan server B bisa mencatat urutan pesanan yang berbeda meskipun pesanan datang di waktu yang hampir sama. Kehadiran satu node leader menyelesaikan kedua masalah ini sekaligus. Semua pesanan masuk diarahkan ke leader terlebih dahulu leader yang memutuskan urutan resmi menggunakan antrean internalnya sebelum meneruskannya ke node lain, sehingga konsistensi data terjaga.
+
+#### Kenapa Bully pilih ID tertinggi?
+Bully Algorithm bekerja berdasarkan asumsi bahwa ID node merepresentasikan prioritasnya untuk menjadi leader. Ketika sebuah node mendeteksi tidak ada leader, ia mengirimkan ELECTION ke semua node ber-ID lebih tinggi. Yang merasa lebih layak membalas OK lalu menjalankan election-nya sendiri ke atas. Proses ini naik berantai sampai ke node ID tertinggi yang masih hidup karena tidak ada yang membalasnya, setelah ELECTION_TIMEOUT ia langsung broadcast COORDINATOR. Hasilnya selalu deterministik: selama ID unik, selalu ada tepat satu pemenang.
+
+#### Kelemahan Bully vs Raft?
+Meskipun mudah diimplementasikan, Bully memiliki beberapa kelemahan. Dari sisi efisiensi, pesan yang dikirim bersifat O(n²) karena election memicu pesan berantai dari bawah ke atas, sedangkan Raft hanya O(n). Selain itu, Bully memiliki leadership gap (ada jeda) di mana sistem tidak punya leader sama sekali antara leader lama mati dan leader baru terpilih sementara Raft meminimalkan ini lewat heartbeat dan penomoran term. Kelemahan terbesar Bully adalah rentan split-brain: saat jaringan terpartisi, dua segmen bisa memilih leader masing-masing sehingga terjadi inkonsistensi data, sedangkan Raft mencegahnya dengan quorum. Meski demikian, untuk 5 node di localhost seperti tugas ini, semua kelemahan itu tidak relevan secara praktis Bully dipilih karena kesederhanaan implementasinya sudah cukup.
+
 ## Struktur Submission
 
 ```
