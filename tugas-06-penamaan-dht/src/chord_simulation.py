@@ -28,27 +28,32 @@ class ChordRing:
         """Tambahkan node baru ke ring. Pindahkan data yang seharusnya
         menjadi tanggung jawab node baru ini dari successor lamanya."""
         node_id = hash_id(node_name)
+        old_successor = self.find_successor(node_id) if self.node else none
 
-        # TODO 1: tambahkan node_id -> node_ip ke self.nodes.
-        # TODO 2: cari successor LAMA dari node_id ini (successor sebelum node
-        # baru bergabung, gunakan find_successor() dengan node_id INI dikecualikan
-        # dulu dari self.nodes saat mencari).
-        # TODO 3: pindahkan semua key di self.data yang seharusnya menjadi
-        # tanggung jawab node baru (key dengan hash <= node_id, tapi masih
-        # dipegang oleh successor lama) ke bawah tanggung jawab node baru.
-        # (Untuk simulasi sederhana, cukup print log siapa mengambil alih apa -
-        # tidak perlu benar-benar memindahkan struktur data kompleks.)
-        print(f"[TODO] Node '{node_name}' (id={node_id}) bergabung, alamat {node_ip}")
+        self.nodes[node_id]= node_ip
+        print(f"Node '{node_name}' (id={node_id}) bergabung, alamat {node_ip}")
+
+        if old_successor is not none:
+            for key_hash, (k_id, _) in list (self.data.items()):
+                if self.find.seccessor(key_hash) == node_id:
+                    print(f"  -> Data '{k_id}' (hash={key_hash}) berpindah dari Node {old_successor} ke Node {node_id}")
 
     def leave(self, node_name: str):
         """Keluarkan sebuah node dari ring. Data yang dipegangnya harus
         berpindah ke successor-nya."""
         node_id = hash_id(node_name)
-
-        # TODO 4: hapus node_id dari self.nodes.
-        # TODO 5: cari successor BARU untuk tiap key yang tadinya dipegang
-        # node ini, pindahkan ke successor tersebut.
-        print(f"[TODO] Node '{node_name}' (id={node_id}) keluar dari ring")
+        if node_id not in self.nodes:
+            return
+        
+        keys_to_move = [k for k in self.data.keys() if self.find_successor(k) == node_id]
+        
+        del self.nodes[node_id]
+        print(f"Node '{node_name}' (id={node_id}) keluar dari ring")
+        
+        for key_hash in keys_to_move:
+            new_successor = self.find_successor(key_hash)
+            k_id, _ = self.data[key_hash]
+            print(f"  -> Data '{k_id}' (hash={key_hash}) diambil alih oleh Node {new_successor}")
 
     def find_successor(self, key_hash: int) -> int:
         """Cari node_id dengan nilai hash TERKECIL yang >= key_hash
