@@ -27,6 +27,7 @@ python3 src/chord_simulation.py
 ## Tugas Analisis (`README.md`)
 
 1. Jelaskan **kenapa DHT/Chord** lebih cocok untuk kasus ini dibanding **flat naming sederhana** (mis. tabel pusat ID→IP) atau **DNS konvensional** — kaitkan dengan sifat "IP kurir sering berubah" dan kebutuhan tanpa titik gagal tunggal.
+
 DHT dengan algoritma Chord cocok digunakan untuk mencari IP kurir karena alamat IP kurir bisa berubah sewaktu-waktu. Dengan Chord, pencarian data dilakukan berdasarkan ID yang sudah di-hash, kemudian sistem menentukan node yang bertanggung jawab atas data tersebut.
 Jika dibandingkan dengan tabel pusat ID ke IP (flat naming sederhana), Chord memiliki kelebihan karena data dan tanggung jawab pencarian dibagi ke beberapa node. Jadi, sistem tidak hanya bergantung pada satu server pusat yang bisa menjadi titik kegagalan.
 Sementara itu, DNS konvensional menggunakan sistem penamaan hierarkis dan dapat menyimpan hasil pencarian dalam cache. Untuk kasus IP kurir yang sering berubah, pembaruan data dan cache perlu dikelola agar informasi yang ditemukan tetap sesuai. Chord dapat menjadi alternatif karena pemetaan data dilakukan secara terdistribusi.
