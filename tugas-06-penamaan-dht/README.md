@@ -27,8 +27,60 @@ python3 src/chord_simulation.py
 ## Tugas Analisis (`README.md`)
 
 1. Jelaskan **kenapa DHT/Chord** lebih cocok untuk kasus ini dibanding **flat naming sederhana** (mis. tabel pusat ID→IP) atau **DNS konvensional** — kaitkan dengan sifat "IP kurir sering berubah" dan kebutuhan tanpa titik gagal tunggal.
+DHT dengan algoritma Chord cocok digunakan untuk mencari IP kurir karena alamat IP kurir bisa berubah sewaktu-waktu. Dengan Chord, pencarian data dilakukan berdasarkan ID yang sudah di-hash, kemudian sistem menentukan node yang bertanggung jawab atas data tersebut.
+Jika dibandingkan dengan tabel pusat ID ke IP (flat naming sederhana), Chord memiliki kelebihan karena data dan tanggung jawab pencarian dibagi ke beberapa node. Jadi, sistem tidak hanya bergantung pada satu server pusat yang bisa menjadi titik kegagalan.
+Sementara itu, DNS konvensional menggunakan sistem penamaan hierarkis dan dapat menyimpan hasil pencarian dalam cache. Untuk kasus IP kurir yang sering berubah, pembaruan data dan cache perlu dikelola agar informasi yang ditemukan tetap sesuai. Chord dapat menjadi alternatif karena pemetaan data dilakukan secara terdistribusi.
+Namun, Chord tetap membutuhkan mekanisme tambahan, seperti replikasi data dan pemulihan node, agar sistem tetap berjalan ketika terjadi kegagalan. Pada tugas ini, Chord masih berupa simulasi dalam satu proses, sehingga belum sepenuhnya menunjukkan ketahanan jaringan terdistribusi.
+
 2. Gambarkan (boleh pakai Mermaid, lihat Tugas 2) ring topology dari simulasi kalian, tandai node mana yang bertanggung jawab atas ID Kurir mana.
+
+| ID Kurir | Hash | Node Penanggung Jawab |
+| :--- | :---: | :--- |
+| kurir-001 | 50 | node-jakarta-2 (102) |
+| kurir-002 | 28 | node-bandung-1 (40) |
+| kurir-003 | 132 | node-surabaya-1 (136) |
+
+```mermaid
+flowchart TD
+    A["node-bandung-1<br/>ID: 40<br/>Kurir-002"]
+    B["node-jakarta-2<br/>ID: 102<br/>Kurir-001"]
+    C["node-medan-1<br/>ID: 123"]
+    D["node-surabaya-1<br/>ID: 136<br/>Kurir-003"]
+    E["node-jakarta-1<br/>ID: 177"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> A
+```
+
 3. Jelaskan apa yang terjadi pada mapping saat sebuah node **keluar** dari ring (siapa yang mengambil alih tanggung jawabnya) — dukung dengan output program.
+
+Ketika sebuah node keluar dari ring Chord, tanggung jawab atas data yang dikelolanya seharusnya dialihkan ke node successor berikutnya. Pada simulasi ini, `node-jakarta-1` dengan ID 177 keluar dari ring. Karena ID tersebut merupakan yang terbesar, successor berikutnya adalah `node-bandung-1` dengan ID 40 melalui mekanisme *wrap-around*.
+
+Setelah node keluar, ring berubah dari lima node menjadi empat node. Hubungan successor diperbarui sehingga `node-surabaya-1` kembali terhubung ke `node-bandung-1`.
+
+Ring Setelah Node Keluar
+```mermaid
+flowchart LR
+    A["node-bandung-1<br/>ID: 40<br/>Kurir-002"]
+    B["node-jakarta-2<br/>ID: 102<br/>Kurir-001"]
+    C["node-medan-1<br/>ID: 123"]
+    D["node-surabaya-1<br/>ID: 136<br/>Kurir-003"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> A
+```
+ Bukti Output Program
+```text
+--- Sebuah node keluar ---
+Node 'node-jakarta-1' (id=177) keluar dari ring
+```
+Pada skenario ini, tidak ada data kurir yang perlu dialihkan dari `node-jakarta-1`, karena ketiga kurir yang didaftarkan tidak menjadi tanggung jawab node tersebut. Oleh karena itu, hasil lookup ketiga kurir tetap sama setelah node keluar.
+Perlu diperhatikan bahwa program ini masih menyimulasikan perpindahan tanggung jawab. Data kurir disimpan dalam satu struktur `self.data`, sehingga belum benar-benar dipindahkan antar-node.
 
 ## Struktur Submission
 
