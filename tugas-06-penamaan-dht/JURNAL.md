@@ -1,8 +1,11 @@
 # Jurnal Proses — Tugas 6
 
 ## Implementasi find_successor
-- Kesalahan pertama yang ditemui (mis. lupa wrap-around di ring): ...
-- Cara memperbaikinya: ...
+- Kesalahan pertama yang ditemui : Lupa bahwa Chord adalah ring, ketika tidak ada node dengan ID >= key_hash, fungsi mengembalikan None instead of wrap-around ke node terkecil, sehingga lookup gagal untuk key_hash yang lebih besar dari semua node.
+- Cara memperbaikinya: Menambahkan fallback setelah loop dan jika tidak ada kandidat yang ditemukan, kembalikan sorted_nodes[0] yaitu node dengan ID terkecil di ring.
+
+- Kesalahan kedua yang ditemui : Sempat ragu apakah aturan successor menggunakan > atau >= sehingga node dengan ID persis sama dengan key_hash tidak ikut dipertimbangkan.
+- Cara memperbaikinya: Baca ulang definisi Chord aturannya adalah terkecil yang >= key_hash, artinya node dengan ID sama persis pun valid sebagai successor. Kondisi di loop diubah dari > menjadi >=.
 
 ## Skenario join/leave
 - Hasil sebelum & sesudah node baru bergabung: ...
