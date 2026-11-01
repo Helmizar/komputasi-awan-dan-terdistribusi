@@ -8,8 +8,8 @@
 - Cara memperbaikinya: Baca ulang definisi Chord aturannya adalah terkecil yang >= key_hash, artinya node dengan ID sama persis pun valid sebagai successor. Kondisi di loop diubah dari > menjadi >=.
 
 ## Skenario join/leave
-- Hasil sebelum & sesudah node baru bergabung: ...
-- Hasil sebelum & sesudah node keluar: ...
+- Hasil sebelum & sesudah node baru bergabung: Node medan-1 masuk di antara node-jakarta-2 (102) dan node-surabaya-1 (136). Karena kurir-001 punya key_hash=50, successor-nya tetap node-jakarta-2 (102) — tidak berubah. Tidak ada data yang berpindah pada skenario ini karena tidak ada kurir dengan key_hash di rentang (102, 123].
+- Hasil sebelum & sesudah node keluar: node-jakarta-1 memiliki ID terbesar (177), sehingga ia bertanggung jawab atas key_hash di rentang (136, 177]. Ketiga kurir yang didaftarkan (hash: 50, 28, 132) tidak masuk rentang tersebut, jadi tidak ada perpindahan data. Setelah node keluar, ring menjadi 4 node dan successor dari node-surabaya-1 (136) wrap-around ke node-bandung-1 (40).
 
 ## Log Penggunaan AI (Level 2)
 
