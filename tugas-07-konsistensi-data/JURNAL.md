@@ -1,11 +1,14 @@
 # Jurnal Proses — Tugas 7
 
 ## Diskusi pemilihan model konsistensi
-- Argumen yang dipertimbangkan: ...
-- Kesimpulan akhir & alasan: ...
+- Argumen yang dipertimbangkan: Dalam menentukan model konsistensi yang sesuai, kami mempertimbangkan perbedaan kebutuhan antara data yang tidak terlalu sensitif dan data yang berhubungan dengan transaksi keuangan. Eventual Consistency masih bisa digunakan untuk data seperti jumlah like di media sosial karena keterlambatan pembaruan tidak terlalu berpengaruh. Namun, pada kasus saldo e-wallet FoodGo, keterlambatan pembaruan bisa menyebabkan masalah. Misalnya, pelanggan sudah melakukan top-up melalui server Jakarta, tetapi ketika melakukan pemesanan melalui server Bandung, saldo yang terbaca masih saldo sebelumnya.
+- Kesimpulan akhir & alasan: Berdasarkan hasil diskusi, Sequential Consistency dinilai lebih sesuai untuk kebutuhan konsistensi data saldo dibandingkan hanya menggunakan Eventual Consistency. Hal ini karena saldo berhubungan langsung dengan transaksi pelanggan sehingga perbedaan data antarserver dapat merugikan pengguna maupun pihak FoodGo. Selain itu, Read-Your-Writes dipilih sebagai pendekatan Client-Centric Consistency untuk memastikan pelanggan tetap dapat melihat perubahan saldo yang baru dilakukan meskipun mengakses server yang berbeda.
 
 ## Simulasi (jika dikerjakan)
-- Hasil skenario naif vs Read-Your-Writes: ...
+- Hasil skenario naif vs Read-Your-Writes: Simulasi dilakukan menggunakan Python dengan melibatkan dua server, yaitu Jakarta dan Bandung. Pada simulasi ini diberikan jeda waktu pada proses replikasi untuk menggambarkan kondisi ketika pembaruan data belum diterima oleh server tujuan.
+Pada skenario pertama, pelanggan melakukan top-up melalui server Jakarta dan saldo berhasil diperbarui. Namun, server Bandung masih menyimpan saldo lama karena proses replikasi belum selesai. Ketika pelanggan mencoba melakukan transaksi melalui server Bandung, sistem membaca saldo yang belum diperbarui sehingga transaksi ditolak.
+Selanjutnya, pada skenario Read-Your-Writes digunakan version token untuk mengetahui versi data terakhir yang dimiliki pelanggan. Ketika pelanggan mengakses server Bandung, sistem memeriksa versi data yang tersedia. Jika versi tersebut masih tertinggal, permintaan akan diteruskan ke server Jakarta yang sudah memiliki data terbaru. Dengan cara ini, pelanggan tetap mendapatkan informasi saldo yang sesuai dengan perubahan terakhir.
+Kesimpulan dari simulasi yang dilakukan, terlihat bahwa keterlambatan replikasi dapat menyebabkan perbedaan saldo antara server Jakarta dan Bandung. Penerapan Read-Your-Writes dapat membantu mengatasi masalah tersebut karena sistem memastikan pelanggan membaca data yang sudah mencakup perubahan terakhir yang dilakukannya.
 
 ## Log Penggunaan AI (Level 2)
 
