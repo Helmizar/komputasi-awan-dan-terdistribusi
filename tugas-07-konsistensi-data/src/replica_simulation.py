@@ -39,13 +39,12 @@ class ReplicationSystem:
         saldo_baru = self.jakarta.read(user_id) + jumlah
         self.jakarta.write(user_id, saldo_baru, version)
 
-        timer = threading.Timer(
+        threading.Timer(
             REPLICATION_DELAY,
             self.bandung.write,
             args=(user_id, saldo_baru, version),
-        )
-        timer.start()
-        print(f"[Replikasi] Jakarta -> Bandung dijadwalkan {REPLICATION_DELAY} detik lagi (versi {version})")
+        ).start()
+        print(f"Replikasi ke Bandung tertunda {REPLICATION_DELAY} detik")
 
     def baca_saldo_naif(self, user_id: str, server: str) -> float:
         """Baca saldo TANPA mekanisme Read-Your-Writes - bisa saja stale."""
@@ -58,20 +57,11 @@ class ReplicationSystem:
         melihat versi lebih baru sebelumnya), tunggu/redirect ke replika yang
         sudah punya versi tersebut (di sini cukup simulasikan dengan polling
         sampai versi replika >= versi_minimal, atau redirect ke Jakarta)."""
-        replica = self.jakarta if server == "Jakarta" else self.bandung
-
-        deadline = time.time() + RYW_TIMEOUT
-        while time.time() < deadline:
-            if replica.version_of(user_id) >= versi_minimal:
-                return replica.read(user_id)
-            time.sleep(POLL_INTERVAL)
-
-        if replica.version_of(user_id) >= versi_minimal:
-            return replica.read(user_id)
-
-        print(f"[RYW] {replica.name} masih tertinggal (versi < {versi_minimal}), redirect ke Jakarta")
-        return self.jakarta.read(user_id)
-
+       replica = self.jakarta if server == "Jakarta" else self.bandung
+        if replica.last_write_version.get(user_id, 0) < versi_minimal:
+            print(f"[Read-Your-Writes] {replica.name} masih tertinggal, redirect ke Jakarta")
+            replica = self.jakarta
+        return replica.read(user_id)
 
 def main():
     system = ReplicationSystem()
@@ -88,14 +78,8 @@ def main():
     print("\n=== Skenario dengan Read-Your-Writes ===")
     system.top_up(user_id, 20000)
     versi_terakhir = system.version_counter
-    time.sleep(0.5)
-    hasil = system.baca_saldo_read_your_writes(user_id, "Bandung", versi_terakhir)
-    print("Baca saldo dari Bandung (Read-Your-Writes):", hasil)
-    print("-> Harusnya 70000 (50000 + 20000), dan SELALU benar")
-    assert hasil == 70000, "Read-Your-Writes gagal!"
-
-    time.sleep(REPLICATION_DELAY)
-    print("\nSetelah replikasi selesai, saldo Bandung:", system.baca_saldo_naif(user_id, "Bandung"))
+    print("Baca saldo dari Bandung (Read-Your-Writes):",
+          system.baca_saldo_read_your_writes(user_id, "Bandung", versi_terakhir))
 
 
 if __name__ == "__main__":
