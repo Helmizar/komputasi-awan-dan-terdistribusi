@@ -20,27 +20,40 @@ Data saldo *e-wallet* pelanggan FoodGo berbeda antara server wilayah **Jakarta**
 3. #### Skenario A — Tanpa Jaminan Konsistensi (bug terjadi)
 
 ```mermaid
-graph LR
-  P[Pelanggan] -->|1. top-up Rp 50.000 - Sinkron| JKT[Server Jakarta]
-  JKT -->|2. OK, saldo = Rp 60.000| P
-  JKT -.->|3. replikasi async - belum selesai| REP[(Proses Replikasi)]
-  REP -.->|update belum tiba| BDG[Server Bandung]
-  P -->|4. pesan makanan Rp 55.000| BDG
-  BDG -->|5. TOLAK - saldo terbaca Rp 10.000| P
+sequenceDiagram
+    actor P as Pelanggan
+    participant JKT as Server Jakarta
+    participant REP as Proses Replikasi
+    participant BDG as Server Bandung
+
+    P->>JKT: 1. top-up Rp 50.000
+    JKT-->>P: 2. OK, saldo = Rp 60.000
+    JKT-)REP: 3. kirim update ke Bandung (async)
+    Note over REP,BDG: Replikasi lambat, update belum tiba!
+    P->>BDG: 4. pesan makanan Rp 55.000
+    BDG-->>P: 5. TOLAK ❌ saldo terbaca masih Rp 10.000
+    REP->>BDG: 6. update saldo tiba (sudah terlambat)
 ```
 
 #### Skenario B — Dengan Solusi Read-Your-Writes (bug teratasi)
 
 ```mermaid
-graph LR
-  P[Pelanggan] -->|1. top-up Rp 50.000 - Sinkron| JKT[Server Jakarta]
-  JKT -->|2. OK + version token v=T1| P
-  JKT -.->|3. replikasi async| REP[(Proses Replikasi)]
-  REP -.->|update dikirim ke Bandung| BDG[Server Bandung]
-  P -->|4. pesan makanan + bawa token v=T1| BDG
-  BDG -->|5. versi lokal v=T0, forward ke Jakarta| JKT
-  JKT -->|6. saldo Rp 60.000 v=T1| BDG
-  BDG -->|7. IZINKAN - saldo cukup| P
+sequenceDiagram
+    actor P as Pelanggan
+    participant JKT as Server Jakarta
+    participant REP as Proses Replikasi
+    participant BDG as Server Bandung
+
+    P->>JKT: 1. top-up Rp 50.000
+    JKT-->>P: 2. OK + version token v=T1
+    Note over P: Simpan token v=T1 di sesi
+    JKT-)REP: 3. kirim update ke Bandung (async)
+    P->>BDG: 4. pesan makanan + bawa token v=T1
+    BDG->>BDG: 5. cek versi lokal = v=T0, belum update
+    BDG->>JKT: 6. forward permintaan baca ke Jakarta
+    JKT-->>BDG: 7. saldo Rp 60.000 (v=T1)
+    BDG-->>P: 8. IZINKAN ✅ saldo cukup
+    REP->>BDG: 9. update replikasi tiba
 ```
 
 ### Bagian 2 — Simulasi (opsional, nilai tambah)
