@@ -57,7 +57,7 @@ class ReplicationSystem:
         melihat versi lebih baru sebelumnya), tunggu/redirect ke replika yang
         sudah punya versi tersebut (di sini cukup simulasikan dengan polling
         sampai versi replika >= versi_minimal, atau redirect ke Jakarta)."""
-       replica = self.jakarta if server == "Jakarta" else self.bandung
+        replica = self.jakarta if server == "Jakarta" else self.bandung
         if replica.last_write_version.get(user_id, 0) < versi_minimal:
             print(f"[Read-Your-Writes] {replica.name} masih tertinggal, redirect ke Jakarta")
             replica = self.jakarta
